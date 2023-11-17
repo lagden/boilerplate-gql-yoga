@@ -1,0 +1,18 @@
+.conf/local.sh
+.vite
+.registry-*
+
+# node
+node_modules
+
+# Logs
+logs
+*.log
+*.log*
+
+# Coverage
+coverage/**
+!coverage/lcov.info
+
+_init
+_cleanup
