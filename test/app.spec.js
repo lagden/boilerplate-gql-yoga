@@ -9,7 +9,7 @@ let prefixUrl
 
 before(async () => {
 	// eslint-disable-next-line no-extra-semi
-	;({server, prefixUrl} = await start(server))
+	;({server, prefixUrl} = await start())
 })
 
 after(async () => {
