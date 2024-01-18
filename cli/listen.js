@@ -1,7 +1,8 @@
 import process from 'node:process'
+import {createServer} from 'node:http'
 import la from '@tadashi/local-access'
 import * as debug from '@tadashi/debug'
-import app from '../server/app.js'
+import yoga from '../server/yoga.js'
 
 // prettier-ignore
 const {
@@ -16,6 +17,7 @@ const {
 	network,
 } = la({port, hostname})
 
+const app = createServer(yoga)
 app.listen(port, () => {
 	debug.info('Server listening')
 	debug.info('----------------')

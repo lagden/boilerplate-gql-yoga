@@ -1,13 +1,12 @@
-import {createServer} from 'node:http'
 import * as debug from '@tadashi/debug'
-import {createYoga, maskError} from 'graphql-yoga'
-import {createInMemoryCache, useResponseCache} from '@graphql-yoga/plugin-response-cache'
 import {uuid} from '@tadashi/common'
 import ee from '@tadashi/ee'
+import {createYoga, maskError} from 'graphql-yoga'
 import schema from './graphql/schema.js'
 
 // prettier-ignore
 const {
+	APP_ENV,
 	LOG_RESOURCE,
 } = process.env
 
@@ -17,9 +16,8 @@ if (LOG_RESOURCE) {
 }
 /* c8 ignore stop */
 
-const cache = createInMemoryCache()
-
 const yoga = createYoga({
+	graphiql: APP_ENV === 'production',
 	schema,
 	graphqlEndpoint: '/gql',
 	healthCheckEndpoint: '/live',
@@ -32,6 +30,15 @@ const yoga = createYoga({
 		}
 	},
 	maskedErrors: {
+		/**
+		 * Masks GraphQL errors and logs them for debugging purposes.
+		 *
+		 * @param {Error} error - The GraphQL error.
+		 * @param {string} message - The error message.
+		 * @param {boolean} isDev - Indicates if the application is in development mode.
+		 * @returns {Object} The masked error object.
+		 * @private
+		 */
 		maskError(error, message, isDev) {
 			debug.error({
 				error: error?.extensions,
@@ -55,15 +62,7 @@ const yoga = createYoga({
 			return maskError(error, message, isDev)
 		},
 	},
-	plugins: [
-		useResponseCache({
-			cache,
-			ttl: 2000,
-			session: () => undefined,
-		}),
-	],
+	plugins: [],
 })
 
-const app = createServer(yoga)
-
-export default app
+export default yoga
